@@ -5,7 +5,7 @@
 #include <winsock2.h>
 #include<stdio.h>
 #pragma comment(lib,"ws2_32.lib")
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 int main()
 {
@@ -13,7 +13,7 @@ int main()
 	WSADATA wsaData;
 	int iResult;
 	sockaddr_in addr;
-	SOCKET sock,client;
+	SOCKET sock;
 
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(2222);
@@ -48,7 +48,7 @@ int main()
 	char ptr[100];
 	for(int i=0;i<10;i++)
 	{
-		sprintf(ptr,"Heartbeat %d",i);
+		sprintf_s(ptr,"Heartbeat %d",i);
 		send(sock,ptr,sizeof(ptr),0);
 		Sleep(1000);
 	}

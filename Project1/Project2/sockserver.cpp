@@ -62,7 +62,7 @@ int main()
 	{
 		if(client == INVALID_SOCKET)
 		{
-			printf("invalid client socket",GetLastError());
+			printf("invalid client socket: %s",GetLastError());
 			continue;
 		}	
 		_beginthreadex(0,0,ServClient,(void*)&client,0,0);
