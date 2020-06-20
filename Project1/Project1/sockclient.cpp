@@ -4,12 +4,14 @@
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include<stdio.h>
+#include"Menu.h"
+#include"Function.h"
 #pragma comment(lib,"ws2_32.lib")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 int main()
 {
-
+	Menu menu;
 	WSADATA wsaData;
 	int iResult;
 	sockaddr_in addr;
@@ -46,6 +48,10 @@ int main()
 	}
 	printf("Connect Server Success\n");
 	char ptr[100];
+	switch (menu.login())
+	{
+	case 1:
+	}
 	for(int i=0;i<10;i++)
 	{
 		sprintf_s(ptr,"Heartbeat %d",i);
