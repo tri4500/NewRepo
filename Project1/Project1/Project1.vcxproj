@@ -142,12 +142,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Function.cpp" />
-    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="sockclient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Function.h" />
-    <ClInclude Include="Menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

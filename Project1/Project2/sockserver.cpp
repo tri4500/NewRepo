@@ -5,10 +5,11 @@
 #include <winsock2.h>
 #include <process.h>
 #include<stdio.h>
+#include"Account.h"
 #pragma comment(lib,"ws2_32.lib" )
 
 unsigned int __stdcall  ServClient(void *data);
-
+Account a;
 int main()
 {
 
@@ -78,11 +79,34 @@ unsigned int __stdcall ServClient(void *data)
 	SOCKET* client =(SOCKET*)data;
     SOCKET Client = *client;
 	printf("Client connected\n");
-	
-	char chunk[200];
-	while(recv(Client,chunk,200,0))
-	{
-		printf("%s \t %d\n",chunk,GetCurrentThreadId());
+	string pw, login;
+
+	int size;
+	for (int i = 0; i < 3; i++) {
+		//Nhan kich thuoc ten dang nhap
+		recv(Client, (char*)&size, sizeof(int), 0);
+		char* chunk = new char[size + 1];
+		//Nhap ten dang nhap
+		recv(Client, chunk, size, 0);
+		chunk[size] = '\0';
+		login = string(chunk);
+		delete[]chunk;
+		//Nhan kich thuoc mat khau
+		recv(Client, (char*)&size, sizeof(int), 0);
+		char * chunk2 = new char[21];
+		//Nhan mat khau
+		recv(Client, chunk2, size, 0);
+		chunk2[size] = '\0';
+		pw = string(chunk2);
+		delete[]chunk2;
+		cout << pw;
+		//Gui xac nhan mat khau
+		int check = a.check(1, login);
+		check = a.check(2, pw);
+		send(Client, (char*)&check, sizeof(int), 0);
+		if (check == 1)
+			break;
 	}
+	printf("Client %d dang nhap thanh cong\n",GetCurrentThreadId());
 return 0;
 }
