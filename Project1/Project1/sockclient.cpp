@@ -44,7 +44,7 @@ int main()
 		printf("Connect failed %u",WSAGetLastError());
 		return 0;
 	}
-
+	printf("Connect Server Success\n");
 	char ptr[100];
 	for(int i=0;i<10;i++)
 	{
