@@ -1,5 +1,8 @@
 ﻿#include "Function.h"
-
+#include <fstream>
+#include <iostream>
+#include <string>
+using namespace std;
 std::string passwordInput(unsigned maxLength)
 {
 	std::string pw;
@@ -102,3 +105,66 @@ int sign_up(SOCKET sock) {
 	Sleep(2000);
 	return sign;
 }
+
+bool up_load(SOCKET sock) {
+	cout << "Nhap ten file: ";
+	string path;
+	cin >> path;
+	fstream src;
+	src.open(path, ios::in | ios::binary);
+	if (!src) {
+		cout << "Khong mo duoc file";
+		src.close();
+		return false;
+	}
+	cout << "mo file thanh cong";
+	src.seekg(0, ios::end);
+	int size = src.tellg();
+	src.seekg(0, ios::beg);
+	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	char* buffer;
+	while (size > 0) {
+		int temp = (size > 512 * 8) ? 512 * 8 : size;
+		size -= 512 * 8;
+		buffer = new char[temp];
+		src.read(buffer, temp);
+		send(sock, buffer, temp, 0);
+		delete[] buffer;
+	}
+	cout << "Upload file thanh cong" << endl;
+	return true;
+}
+
+
+bool down_load(SOCKET sock) {
+	cout << "Nhap vi tri file: ";
+	int pos;
+	cin >> pos;
+	send(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
+	string path;
+	cout << "Nhap ten file khi tai xuong:";
+	cin >> path;
+	fstream des;
+	des.open(path, ios::trunc | ios::binary);
+	if (!des) {
+		cout << "Khong mo duoc file";
+		src.close();
+		return false;
+	}
+	cout << "mo file thanh cong";
+	int size;
+	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	char* buffer;
+	while (size > 0) {
+		int temp = (size > 512 * 8) ? 512 * 8 : size;
+		size -= 512 * 8;
+		buffer = new char[temp];
+		recv(sock, buffer, temp, 0);
+		des.write(buffer, temp);
+		delete[] buffer;
+	}
+	cout << "Download file thanh cong" << endl;
+	return true;
+}
+
+
