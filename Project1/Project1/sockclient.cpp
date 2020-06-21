@@ -47,9 +47,7 @@ int main()
 	printf("Connect Server Success\n");
 
 	login(sock);
-	int a;
-	cin >> a;
-	 
+
 	closesocket(sock);
 	return 0;
 }

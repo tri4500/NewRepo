@@ -63,7 +63,7 @@ int main()
 	{
 		if(client == INVALID_SOCKET)
 		{
-			printf("invalid client socket: %s",GetLastError());
+			printf("invalid client socket: %s",(char*)GetLastError());
 			continue;
 		}	
 		_beginthreadex(0,0,ServClient,(void*)&client,0,0);
@@ -79,31 +79,8 @@ unsigned int __stdcall ServClient(void* data)
 	SOCKET* client = (SOCKET*)data;
 	SOCKET Client = *client;
 	printf("Client connected\n");
-	string pw, login;
-	int size;
-	char *buffer;
-	//Nhan kich thuoc cua ten dang nhap
-	recv(Client, (char*)&size, sizeof(int), 0);
-	buffer = new char[size + 1];
-	//Nhan ten dang nhap
-	recv(Client, buffer, size, 0);
-	buffer[size] = '\0';
-	login = string(buffer);
-	//Nhan kich thuoc mat khau
-	recv(Client,(char*)& size, sizeof(int), 0);
-	buffer = new char[size + 1];
-	//Nhan mat khau
-	recv(Client, buffer, size, 0);
-	buffer[size] = '\0';
-	pw = string(buffer);
-	//Kiem tra ten dang nhap va mat khau
-	int check = a.check(login, pw);
-	send(Client, (char*)&check, sizeof(int), 0);
-	if (check == 1)
-		printf("\n\nClient %d dang nhap thanh cong\n", GetCurrentThreadId());
-	else
-		cout << "\nDang nhap that bai";
-	int a;
-	cin >> a;
+	int check = login(Client,a);
+	closesocket(Client);
 	return 0;
+
 }
