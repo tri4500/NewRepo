@@ -22,7 +22,7 @@ int main()
 	addr.sin_port = htons(2222);
 	addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 
-	iResult = WSAStartup(MAKEWORD(2,2),&wsaData);//2.2 
+	iResult = WSAStartup(MAKEWORD(2,2),&wsaData);//2.2
 
 	if(iResult)
 	{
@@ -91,7 +91,6 @@ unsigned int __stdcall ServClient(void* data)
 	else if (option == 2)
 	{
 		check=sign_up(Client, a);
-		
 	}
 	else
 	{
@@ -102,5 +101,5 @@ unsigned int __stdcall ServClient(void* data)
 		cout << "Dang cap nhat\n";
 	closesocket(Client);
 	return 0;
-
 }
+

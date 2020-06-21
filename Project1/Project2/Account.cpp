@@ -102,3 +102,17 @@ int sign_up(SOCKET Client, Account list) {
 
 	return list.check_login(login);
 }
+
+
+bool send_list_file(SOCKET sock, vector<string> list) {
+	string s;
+	for (int i = 0; i < list.size(); i++) {
+		s += to_string(i) + "   ";
+		s += list[i];
+		s += '\n';
+	}
+	int size = s.length() + 1;
+	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	send(sock, s.c_str(), size, 0);
+	return true;
+}

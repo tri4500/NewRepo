@@ -132,6 +132,7 @@ bool up_load(SOCKET sock) {
 		delete[] buffer;
 	}
 	cout << "Upload file thanh cong" << endl;
+	src.close();
 	return true;
 }
 
@@ -148,7 +149,7 @@ bool down_load(SOCKET sock) {
 	des.open(path, ios::trunc | ios::binary);
 	if (!des) {
 		cout << "Khong mo duoc file";
-		src.close();
+		des.close();
 		return false;
 	}
 	cout << "mo file thanh cong";
@@ -164,6 +165,16 @@ bool down_load(SOCKET sock) {
 		delete[] buffer;
 	}
 	cout << "Download file thanh cong" << endl;
+	des.close();
+	return true;
+}
+
+bool get_list_file(SOCKET sock, char* buffer) {
+	delete[] buffer;
+	int size;
+	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	buffer = new char[size];
+	recv(sock, buffer, size, 0);
 	return true;
 }
 
