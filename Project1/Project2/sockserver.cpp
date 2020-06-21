@@ -78,8 +78,27 @@ unsigned int __stdcall ServClient(void* data)
 {
 	SOCKET* client = (SOCKET*)data;
 	SOCKET Client = *client;
+	int check;
 	printf("Client connected\n");
-	int check = login(Client,a);
+	int option;
+	recv(Client, (char*)&option, sizeof(int), 0);
+	if (option == 1)
+	{
+		"Client dang dang nhap";
+		check = login(Client, a);
+	}
+	else if (option == 2)
+	{
+		cout << "ham dang ki hien dang cap nhat\n";
+		check = 1;
+	}
+	else
+	{
+		cout << "Client thoat\n";
+		check = 0;
+	}
+	if (check == 1)
+		cout << "Dang cap nhat\n";
 	closesocket(Client);
 	return 0;
 

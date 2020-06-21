@@ -11,7 +11,8 @@ private:
 	SOCKET	sock;
 public:
 	Menu();
+	Menu(SOCKET a);
 	~Menu();
-	int login();
+	int start();
 };
 

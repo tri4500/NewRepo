@@ -39,11 +39,10 @@ int login(SOCKET Client,Account a)
 	if (check == 1)
 	{
 		printf("\n\nClient %d dang nhap thanh cong\n", GetCurrentThreadId());
-		return 1;
 	}
 	else
 	{
 		cout << "\nDang nhap that bai";
-		return -1;
 	}
+	return check;
 }

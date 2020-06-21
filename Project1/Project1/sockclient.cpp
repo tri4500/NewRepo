@@ -5,6 +5,7 @@
 #include <winsock2.h>
 #include<stdio.h>
 #include"Function.h"
+#include"Menu.h"
 #pragma comment(lib,"ws2_32.lib")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
@@ -45,8 +46,9 @@ int main()
 		return 0;
 	}
 	printf("Connect Server Success\n");
-
-	login(sock);
+	Menu menu(sock);
+	if (menu.start() == 1)
+		cout << "chua viet code";
 
 	closesocket(sock);
 	return 0;

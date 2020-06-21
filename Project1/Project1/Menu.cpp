@@ -1,10 +1,19 @@
 #include "Menu.h"
+#include"Function.h"
 #include<stdio.h>
 Menu::Menu()
 {
-
+    sock = INVALID_SOCKET;
 }
-int Menu::login()
+Menu::Menu(SOCKET a)
+{
+    sock = a;
+}
+Menu::~Menu()
+{
+    closesocket(sock);
+}
+int Menu::start()
 {
     cout << "1. Sign in\n";
     cout << "2. Sign up\n";
@@ -12,5 +21,19 @@ int Menu::login()
     cout << "Moi ban chon: ";
     int i;
     cin >> i;
-    return i;
+    send(sock, (char*)&i, sizeof(int), 0);
+    if (i == 1)
+    {
+       
+       return login(sock);
+    }
+    else if (i == 2)
+    {
+        
+        cout << "Dang cap nhat";
+        return 0;
+    }
+    else
+        cout << "Tam biet";
+    return 0;
 }

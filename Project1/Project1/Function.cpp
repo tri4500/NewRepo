@@ -61,5 +61,5 @@ int login(SOCKET &sock) {
 		cout << "Ban dang nhap thanh cong";
 	else
 		cout << "Dang nhap that bai";
-	return 1;
+	return sign;
 }
