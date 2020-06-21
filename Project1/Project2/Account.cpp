@@ -129,3 +129,25 @@ bool send_list_file(SOCKET sock, vector<string> list) {
 	send(sock, s.c_str(), size, 0);
 	return true;
 }
+
+bool up_load(SOCKET sock, vector<string> list) {
+	int size;
+	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	string path;
+	recv(sock, reinterpret_cast<char*>(&path), size, 0);
+
+	fstream des;
+	des.open(path, ios::trunc | ios::out | ios::binary);
+	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	char* buffer;
+	while (size > 0) {
+		int temp = (size > 512 * 8) ? 512 * 8 : size;
+		size -= 512 * 8;
+		buffer = new char[temp];
+		recv(sock, buffer, temp, 0);
+		des.write(buffer, temp);
+		delete[] buffer;
+	}
+	des.close();
+	return true;
+}
