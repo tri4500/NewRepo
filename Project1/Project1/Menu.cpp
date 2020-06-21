@@ -30,8 +30,7 @@ int Menu::start()
     else if (i == 2)
     {
         
-        cout << "Dang cap nhat";
-        return 0;
+       return sign_up(sock);
     }
     else
         cout << "Tam biet";

@@ -48,7 +48,7 @@ int main()
 	printf("Connect Server Success\n");
 	Menu menu(sock);
 	if (menu.start() == 1)
-		cout << "chua viet code";
+		cout << "cac dich vu khac chua viet code";
 
 	closesocket(sock);
 	return 0;

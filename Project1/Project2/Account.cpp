@@ -2,8 +2,10 @@
 
 Account::Account()
 {
-	login_name = "admin";
-	password = "123";
+	user b;
+	b.login_name = "admin";
+	b.password = "123";
+	list.push_back(b);
 }
 
 Account::~Account()
@@ -12,7 +14,32 @@ Account::~Account()
 
 int Account::check(string login,string pass)
 {
-	return login_name == login && password == pass;
+	int check=0;
+	for (int i = 0; i < list.size(); i++)
+	{
+		check = (login==list[i].login_name) && (pass==list[i].password);
+		if (check == 1)
+			return check;
+	}
+	return check;
+}
+int Account::check_login(string login)
+{
+	int check = 0;
+	for (int i = 0; i < list.size(); i++)
+	{
+		check = (login == list[i].login_name);
+		if (check == 1)
+			return check;
+	}
+	return check;
+}
+void Account::push_back(string login, string pass)
+{
+	user a;
+	a.login_name = login;
+	a.password = pass;
+	list.push_back(a);
 }
 int login(SOCKET Client,Account a)
 {
@@ -44,5 +71,34 @@ int login(SOCKET Client,Account a)
 	{
 		cout << "\nDang nhap that bai";
 	}
+	delete[]buffer;
 	return check;
+}
+int sign_up(SOCKET Client, Account list) {
+	string pw, login;
+	int size;
+	char* buffer;
+	do
+	{
+		//Nhan kich thuoc cua ten dang nhap
+		recv(Client, (char*)&size, sizeof(int), 0);
+		buffer = new char[size + 1];
+		//Nhan ten dang nhap
+		recv(Client, buffer, size, 0);
+		buffer[size] = '\0';
+		login = string(buffer);
+		int check = list.check_login(login);
+		send(Client, (char*)&check, sizeof(int), 0);
+	} while (list.check_login(login) == 1);
+	//Nhan kich thuoc mat khau
+	recv(Client, (char*)&size, sizeof(int), 0);
+	buffer = new char[size + 1];
+	//Nhan mat khau
+	recv(Client, buffer, size, 0);
+	buffer[size] = '\0';
+	pw = string(buffer);
+	list.push_back(login, pw);
+	delete[]buffer;
+
+	return list.check_login(login);
 }

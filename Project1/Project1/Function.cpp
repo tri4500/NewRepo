@@ -56,10 +56,49 @@ int login(SOCKET &sock) {
 	send(sock, pw.c_str(), len2, 0);
 	//Nhan tin nhan kiem tra cua server
 	recv(sock, (char*)&sign, sizeof(int), 0);
-	cout << endl << sign << endl;
 	if (sign == 1)
 		cout << "Ban dang nhap thanh cong";
 	else
 		cout << "Dang nhap that bai";
+	return sign;
+}
+int sign_up(SOCKET sock) {
+	string login, pw;
+	int sign;
+	int len1, len2;
+	do
+	{
+		cout << "Login: ";
+		cin >> login;
+		len1 = (int)login.length();		
+		// Gui kich thuoc cua ten dang nhap
+		send(sock, (char*)&len1, sizeof(int), 0);
+		//Gui ten dang nhap
+		send(sock, login.c_str(), len1, 0);
+		//Nhan tin nhan kiem tra cua server
+		recv(sock, (char*)&sign, sizeof(int), 0);
+		if (sign == 1)
+			cout << "Xin loi ten da co nguoi su dung";
+		else
+			cout << "Ban co the su dung ten dang nhap nay";
+	} while (sign == 1);
+
+
+	string confirm;
+	do {
+		cout << "Password: ";
+		pw = passwordInput(6);
+		cout << "Moi ban xac nhan lai: ";
+		confirm = passwordInput(6);
+		if (pw.compare(confirm) != 0)
+			cout << "Mat khau khong khop, moi ban nhap lai\n";
+	} while (pw.compare(confirm) != 0);
+	len2 = (int)pw.length();
+	//Gui kich thuoc mat khau
+	send(sock, (char*)&len2, sizeof(int), 0);
+	//Gui mat khau
+	send(sock, pw.c_str(), len2, 0);
+	cout << "Dang ki thanh cong";
+	Sleep(2000);
 	return sign;
 }

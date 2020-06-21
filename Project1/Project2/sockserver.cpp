@@ -81,6 +81,7 @@ unsigned int __stdcall ServClient(void* data)
 	int check;
 	printf("Client connected\n");
 	int option;
+	// Client chon dang nhap hoac dang ki
 	recv(Client, (char*)&option, sizeof(int), 0);
 	if (option == 1)
 	{
@@ -89,8 +90,8 @@ unsigned int __stdcall ServClient(void* data)
 	}
 	else if (option == 2)
 	{
-		cout << "ham dang ki hien dang cap nhat\n";
-		check = 1;
+		check=sign_up(Client, a);
+		
 	}
 	else
 	{
