@@ -74,39 +74,36 @@ int main()
 	return 0;
 }
 
-unsigned int __stdcall ServClient(void *data)
+unsigned int __stdcall ServClient(void* data)
 {
-	SOCKET* client =(SOCKET*)data;
-    SOCKET Client = *client;
+	SOCKET* client = (SOCKET*)data;
+	SOCKET Client = *client;
 	printf("Client connected\n");
 	string pw, login;
-
 	int size;
-	for (int i = 0; i < 3; i++) {
-		//Nhan kich thuoc ten dang nhap
-		recv(Client, (char*)&size, sizeof(int), 0);
-		char* chunk = new char[size + 1];
-		//Nhap ten dang nhap
-		recv(Client, chunk, size, 0);
-		chunk[size] = '\0';
-		login = string(chunk);
-		delete[]chunk;
-		//Nhan kich thuoc mat khau
-		recv(Client, (char*)&size, sizeof(int), 0);
-		char * chunk2 = new char[21];
-		//Nhan mat khau
-		recv(Client, chunk2, size, 0);
-		chunk2[size] = '\0';
-		pw = string(chunk2);
-		delete[]chunk2;
-		cout << pw;
-		//Gui xac nhan mat khau
-		int check = a.check(1, login);
-		check = a.check(2, pw);
-		send(Client, (char*)&check, sizeof(int), 0);
-		if (check == 1)
-			break;
-	}
-	printf("Client %d dang nhap thanh cong\n",GetCurrentThreadId());
-return 0;
+	char *buffer;
+	//Nhan kich thuoc cua ten dang nhap
+	recv(Client, (char*)&size, sizeof(int), 0);
+	buffer = new char[size + 1];
+	//Nhan ten dang nhap
+	recv(Client, buffer, size, 0);
+	buffer[size] = '\0';
+	login = string(buffer);
+	//Nhan kich thuoc mat khau
+	recv(Client,(char*)& size, sizeof(int), 0);
+	buffer = new char[size + 1];
+	//Nhan mat khau
+	recv(Client, buffer, size, 0);
+	buffer[size] = '\0';
+	pw = string(buffer);
+	//Kiem tra ten dang nhap va mat khau
+	int check = a.check(login, pw);
+	send(Client, (char*)&check, sizeof(int), 0);
+	if (check == 1)
+		printf("\n\nClient %d dang nhap thanh cong\n", GetCurrentThreadId());
+	else
+		cout << "\nDang nhap that bai";
+	int a;
+	cin >> a;
+	return 0;
 }

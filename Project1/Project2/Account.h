@@ -9,6 +9,6 @@ class Account
 public:
 	Account();
 	~Account();
-	int check(int sign, string a);// neu sign =1 thi kiem tra login , neu sign=2 thi kiem tra password
+	int check(string login, string pass);// neu sign =1 thi kiem tra login , neu sign=2 thi kiem tra password
 };
 

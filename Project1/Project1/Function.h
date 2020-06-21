@@ -6,4 +6,4 @@
 using namespace std;
 std::string passwordInput(unsigned maxLength);
 string create_password();
-int login(SOCKET sock);
+int login(SOCKET &sock);

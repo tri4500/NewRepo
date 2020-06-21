@@ -10,10 +10,7 @@ Account::~Account()
 {
 }
 
-int Account::check(int sign,string a)
+int Account::check(string login,string pass)
 {
-	if (sign == 1)
-		return a == login_name;
-	else
-		return a == password;
+	return login_name == login && password == pass;
 }
