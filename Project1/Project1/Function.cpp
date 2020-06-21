@@ -81,9 +81,9 @@ int sign_up(SOCKET sock) {
 		//Nhan tin nhan kiem tra cua server
 		recv(sock, (char*)&sign, sizeof(int), 0);
 		if (sign == 1)
-			cout << "Xin loi ten da co nguoi su dung";
+			cout << "Xin loi ten da co nguoi su dung\n";
 		else
-			cout << "Ban co the su dung ten dang nhap nay";
+			cout << "Ban co the su dung ten dang nhap nay\n";
 	} while (sign == 1);
 
 

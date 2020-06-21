@@ -91,6 +91,7 @@ unsigned int __stdcall ServClient(void* data)
 	else if (option == 2)
 	{
 		check=sign_up(Client, a);
+		a.save_list_user_file();
 	}
 	else
 	{

@@ -2,16 +2,29 @@
 
 Account::Account()
 {
-	user b;
-	b.login_name = "admin";
-	b.password = "123";
-	list.push_back(b);
+	ifstream file;
+	user temp;
+	file.open("listaccount.txt", std::ofstream::in);
+	while (!file.eof()) {
+		getline(file, temp.login_name, ' ');
+		getline(file, temp.password);
+		list.push_back(temp);
+	}
+	file.close();
 }
 
 Account::~Account()
 {
 }
-
+void Account::save_list_user_file()
+{
+	mtx.lock();
+	fstream file;
+	file.open("listaccount.txt", std::fstream::app);
+	file << list.back().login_name << " " << list.back().password << endl;
+	file.close();
+	mtx.unlock();
+}
 int Account::check(string login,string pass)
 {
 	int check=0;
@@ -41,7 +54,7 @@ void Account::push_back(string login, string pass)
 	a.password = pass;
 	list.push_back(a);
 }
-int login(SOCKET Client,Account a)
+int login(SOCKET &Client,Account &a)
 {
 	string pw, login;
 	int size;
@@ -74,7 +87,7 @@ int login(SOCKET Client,Account a)
 	delete[]buffer;
 	return check;
 }
-int sign_up(SOCKET Client, Account list) {
+int sign_up(SOCKET& Client, Account &list) {
 	string pw, login;
 	int size;
 	char* buffer;

@@ -3,6 +3,8 @@
 #include<string>
 #include<winsock.h>
 #include<vector>
+#include<mutex>
+#include<fstream>
 using namespace std;
 struct user {
 	string login_name;
@@ -11,6 +13,7 @@ struct user {
 class Account
 {
 	vector<user> list;
+	mutex mtx;
 public:
 	Account();
 	~Account();
@@ -19,7 +22,8 @@ public:
 	//Kiểm tra tên đăng nhập có hay khong
 	int check_login(string login);
 	void push_back(string login, string pass);
+	void save_list_user_file();
 };
 
-int login(SOCKET Client,Account a);
-int sign_up(SOCKET Client, Account list);
+int login(SOCKET &Client,Account &a);
+int sign_up(SOCKET&Client, Account &list);
