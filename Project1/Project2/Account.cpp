@@ -26,6 +26,7 @@ void Account::save_list_user_file()
 	file.close();
 	mtx.unlock();
 }
+//logount
 void Account::log_out(string name)
 {
 	for (int i = 0; i < list.size(); i++)
