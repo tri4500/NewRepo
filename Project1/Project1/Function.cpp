@@ -146,7 +146,7 @@ bool down_load(SOCKET sock) {
 	cout << "Nhap ten file khi tai xuong:";
 	cin >> path;
 	fstream des;
-	des.open(path, ios::trunc | ios::binary);
+	des.open(path, ios::out | ios::trunc | ios::binary);
 	if (!des) {
 		cout << "Khong mo duoc file";
 		des.close();

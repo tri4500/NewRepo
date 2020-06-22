@@ -5,6 +5,7 @@
 #include<vector>
 #include<mutex>
 #include<fstream>
+#include <mutex>
 using namespace std;
 struct user {
 	string login_name;
@@ -27,3 +28,10 @@ public:
 
 int login(SOCKET &Client,Account &a);
 int sign_up(SOCKET&Client, Account &list);
+
+struct file {
+	mutex mutex_val;
+	mutex mutex_access;
+	int count;
+	string name;
+};
