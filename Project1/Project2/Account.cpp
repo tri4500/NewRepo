@@ -4,6 +4,7 @@ Account::Account()
 {
 	ifstream file;
 	user temp;
+	temp.is_login = false;
 	file.open("listaccount.txt", std::ofstream::in);
 	while (!file.eof()) {
 		getline(file, temp.login_name, ' ');
@@ -25,14 +26,32 @@ void Account::save_list_user_file()
 	file.close();
 	mtx.unlock();
 }
+void Account::log_out(string name)
+{
+	for (int i = 0; i < list.size(); i++)
+	{
+		if (name == list[i].login_name)
+		{
+			list[i].is_login = false;
+			return;
+		}
+	}
+}
 int Account::check(string login,string pass)
 {
 	int check=0;
 	for (int i = 0; i < list.size(); i++)
 	{
-		check = (login==list[i].login_name) && (pass==list[i].password);
+		check = (login == list[i].login_name) && (pass == list[i].password);
 		if (check == 1)
-			return check;
+		{
+			if (list[i].is_login == true)
+				return -1;
+			else {
+				list[i].is_login = true;
+				return check;
+			}
+		}
 	}
 	return check;
 }
@@ -54,7 +73,7 @@ void Account::push_back(string login, string pass)
 	a.password = pass;
 	list.push_back(a);
 }
-int login(SOCKET &Client,Account &a)
+int login(SOCKET &Client,Account &a,string &name)
 {
 	string pw, login;
 	int size;
@@ -79,10 +98,11 @@ int login(SOCKET &Client,Account &a)
 	if (check == 1)
 	{
 		printf("\n\nClient %d dang nhap thanh cong\n", GetCurrentThreadId());
+		name = login;
 	}
 	else
 	{
-		cout << "\nDang nhap that bai";
+		cout << "\nDang nhap that bai\n";
 	}
 	delete[]buffer;
 	return check;
@@ -117,6 +137,16 @@ int sign_up(SOCKET& Client, Account &list) {
 }
 
 
+
+void send_all(vector<SOCKET>& list)
+{
+	for (int i = 0; i < list.size() - 1; i++)
+	{
+		send(list[i], "new one", 200, 0);
+	}
+}
+
+
 bool send_list_file(SOCKET sock, vector<string> list) {
 	string s;
 	for (int i = 0; i < list.size(); i++) {
@@ -130,111 +160,111 @@ bool send_list_file(SOCKET sock, vector<string> list) {
 	return true;
 }
 
-bool up_load(SOCKET sock, vector<file> list) {
-	int size;
-	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	string path;
-	recv(sock, reinterpret_cast<char*>(&path), size, 0);
-	bool check = true;
-	int i;
-	for (i = 0; i < list.size(); i++) {
-		if (path.compare(list[i].name) == 0) {
-			check = false;
-			break;
-		}
-	}
-	if (check) {
-		file temp;
-		temp.name = path;
-		temp.count = 0;
-		fstream des;
-		des.open(path, ios::trunc | ios::out | ios::binary);
-		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-		char* buffer;
-		while (size > 0) {
-			int temp = (size > 512 * 8) ? 512 * 8 : size;
-			size -= 512 * 8;
-			buffer = new char[temp];
-			recv(sock, buffer, temp, 0);
-			des.write(buffer, temp);
-			delete[] buffer;
-		}
-		des.close();
-		list.push_back(temp);
-	}
-	else {
-		list[i].mutex_access.lock();
-		fstream des;
-		des.open(path, ios::trunc | ios::out | ios::binary);
-		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-		char* buffer;
-		while (size > 0) {
-			int temp = (size > 512 * 8) ? 512 * 8 : size;
-			size -= 512 * 8;
-			buffer = new char[temp];
-			recv(sock, buffer, temp, 0);
-			des.write(buffer, temp);
-			delete[] buffer;
-		}
-		des.close();
-		list[i].mutex_access.unlock();
-	}
-	return true;
-}
+//bool up_load(SOCKET sock, vector<file> list) {
+//	int size;
+//	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+//	string path;
+//	recv(sock, reinterpret_cast<char*>(&path), size, 0);
+//	bool check = true;
+//	int i;
+//	for (i = 0; i < list.size(); i++) {
+//		if (path.compare(list[i].name) == 0) {
+//			check = false;
+//			break;
+//		}
+//	}
+//	if (check) {
+//		file temp;
+//		temp.name = path;
+//		temp.count = 0;
+//		fstream des;
+//		des.open(path, ios::trunc | ios::out | ios::binary);
+//		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+//		char* buffer;
+//		while (size > 0) {
+//			int temp = (size > 512 * 8) ? 512 * 8 : size;
+//			size -= 512 * 8;
+//			buffer = new char[temp];
+//			recv(sock, buffer, temp, 0);
+//			des.write(buffer, temp);
+//			delete[] buffer;
+//		}
+//		des.close();
+//		list.push_back(temp);
+//	}
+//	else {
+//		list[i].mutex_access.lock();
+//		fstream des;
+//		des.open(path, ios::trunc | ios::out | ios::binary);
+//		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+//		char* buffer;
+//		while (size > 0) {
+//			int temp = (size > 512 * 8) ? 512 * 8 : size;
+//			size -= 512 * 8;
+//			buffer = new char[temp];
+//			recv(sock, buffer, temp, 0);
+//			des.write(buffer, temp);
+//			delete[] buffer;
+//		}
+//		des.close();
+//		list[i].mutex_access.unlock();
+//	}
+//	return true;
+//}
 
-bool load_list_file(vector<file>& v) {
-	fstream f;
-	f.open("list_file.txt", ios::in | ios::binary);
-	if (!f) {
-		cout << "khong mo dc file";
-		return false;
-	}
-	v.clear();
-	while (!f.eof()) {
-		file temp;
-		getline(f, temp.name);
-		temp.count = 0;
-		v.push_back(temp);
-	}
-	v.pop_back();
-	return true;
-}
+//bool load_list_file(vector<file>& v) {
+//	fstream f;
+//	f.open("list_file.txt", ios::in | ios::binary);
+//	if (!f) {
+//		cout << "khong mo dc file";
+//		return false;
+//	}
+//	//v.clear();
+//	while (!f.eof()) {
+//		file temp;
+//		getline(f, temp.name);
+//		temp.count = 0;
+//		v.push_back(temp);
+//	}
+//	v.pop_back();
+//	return true;
+//}
 
-bool down_load(SOCKET sock, vector<file> list) {
-	int pos;
-	bool val_return = true;
-	recv(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
-	list[pos].mutex_val.lock();
-	list[pos].count++;
-	if (list[pos].count == 1) {
-		list[pos].mutex_access.lock();
-	}
-	list[pos].mutex_val.unlock();
-	fstream src;
-	src.open(list[pos].name, ios::in | ios::binary);
-	if (!src) {
-		val_return = false;
-	}
-	else {
-		int size;
-		src.seekg(0, ios::end);
-		size = src.tellg();
-		src.seekg(0, ios::beg);
-		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-		while (size > 0) {
-			int temp = (size > 512 * 8) ? 512 * 8 : size;
-			size -= 512 * 8;
-			char* buffer = new char[temp];
-			src.read(buffer, temp);
-			send(sock, buffer, temp, 0);
-			delete[] buffer;
-		}
-	}
-	list[pos].mutex_val.lock();
-	list[pos].count--;
-	if (list[pos].count == 0) {
-		list[pos].mutex_access.unlock();
-	}
-	list[pos].mutex_val.unlock();
-	return val_return;
-}
+//bool down_load(SOCKET sock, vector<file>& list) {
+//	int pos;
+//	bool val_return = true;
+//	recv(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
+//	list[pos].mutex_val.lock();
+//	list[pos].count++;
+//	if (list[pos].count == 1) {
+//		list[pos].mutex_access.lock();
+//	}
+//	list[pos].mutex_val.unlock();
+//	fstream src;
+//	src.open(list[pos].name, ios::in | ios::binary);
+//	if (!src) {
+//		val_return = false;
+//	}
+//	else {
+//		int size;
+//		src.seekg(0, ios::end);
+//		size = src.tellg();
+//		src.seekg(0, ios::beg);
+//		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+//		while (size > 0) {
+//			int temp = (size > 512 * 8) ? 512 * 8 : size;
+//			size -= 512 * 8;
+//			char* buffer = new char[temp];
+//			src.read(buffer, temp);
+//			send(sock, buffer, temp, 0);
+//			delete[] buffer;
+//		}
+//	}
+//	list[pos].mutex_val.lock();
+//	list[pos].count--;
+//	if (list[pos].count == 0) {
+//		list[pos].mutex_access.unlock();
+//	}
+//	list[pos].mutex_val.unlock();
+//	return val_return;
+//}

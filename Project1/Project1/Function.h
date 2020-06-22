@@ -8,3 +8,5 @@ std::string passwordInput(unsigned maxLength);
 string create_password();
 int login(SOCKET &sock);
 int sign_up(SOCKET sock);
+unsigned int __stdcall  Listen(void* data);
+

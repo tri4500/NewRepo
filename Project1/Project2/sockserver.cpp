@@ -10,6 +10,7 @@
 
 unsigned int __stdcall  ServClient(void *data);
 Account a;
+vector<SOCKET> list_socket;
 int main()
 {
 
@@ -65,7 +66,8 @@ int main()
 		{
 			printf("invalid client socket: %s",(char*)GetLastError());
 			continue;
-		}	
+		}
+		list_socket.push_back(client);
 		_beginthreadex(0,0,ServClient,(void*)&client,0,0);
 		
 	}
@@ -78,15 +80,17 @@ unsigned int __stdcall ServClient(void* data)
 {
 	SOCKET* client = (SOCKET*)data;
 	SOCKET Client = *client;
+	string name;
 	int check;
 	printf("Client connected\n");
+	send_all(list_socket);
 	int option;
 	// Client chon dang nhap hoac dang ki
 	recv(Client, (char*)&option, sizeof(int), 0);
 	if (option == 1)
 	{
-		"Client dang dang nhap";
-		check = login(Client, a);
+		"Client dang dang nhap\n";
+		check = login(Client, a,name);
 	}
 	else if (option == 2)
 	{
@@ -100,7 +104,9 @@ unsigned int __stdcall ServClient(void* data)
 	}
 	if (check == 1)
 		cout << "Dang cap nhat\n";
+
 	closesocket(Client);
+	a.log_out(name);
 	return 0;
 }
 

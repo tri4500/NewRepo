@@ -10,6 +10,7 @@ using namespace std;
 struct user {
 	string login_name;
 	string password;
+	bool is_login;
 };
 class Account
 {
@@ -24,9 +25,10 @@ public:
 	int check_login(string login);
 	void push_back(string login, string pass);
 	void save_list_user_file();
+	void log_out(string name);
 };
 
-int login(SOCKET &Client,Account &a);
+int login(SOCKET &Client,Account &a,string &name);
 int sign_up(SOCKET&Client, Account &list);
 
 struct file {
@@ -35,3 +37,4 @@ struct file {
 	int count;
 	string name;
 };
+void send_all(vector<SOCKET>&list);

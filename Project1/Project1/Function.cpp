@@ -59,10 +59,13 @@ int login(SOCKET &sock) {
 	send(sock, pw.c_str(), len2, 0);
 	//Nhan tin nhan kiem tra cua server
 	recv(sock, (char*)&sign, sizeof(int), 0);
+	cout << sign;
 	if (sign == 1)
-		cout << "Ban dang nhap thanh cong";
+		cout << "Ban dang nhap thanh cong\n";
+	else if (sign == -1)
+		cout << "Tai khoan nay hien dang co nguoi dung\n";
 	else
-		cout << "Dang nhap that bai";
+		cout << "Dang nhap that bai\n";
 	return sign;
 }
 int sign_up(SOCKET sock) {
@@ -101,9 +104,21 @@ int sign_up(SOCKET sock) {
 	send(sock, (char*)&len2, sizeof(int), 0);
 	//Gui mat khau
 	send(sock, pw.c_str(), len2, 0);
-	cout << "Dang ki thanh cong";
+	cout << "Dang ki thanh cong\n";
 	Sleep(2000);
 	return sign;
+}
+
+unsigned int __stdcall Listen(void* data)
+{
+	SOCKET* client = (SOCKET*)data;
+	SOCKET Client = *client;
+	char chunk[200];
+	while (recv(Client, chunk, 200, 0))
+	{
+		printf("\n%s", chunk);
+	}
+	return 0;
 }
 
 bool up_load(SOCKET sock) {
