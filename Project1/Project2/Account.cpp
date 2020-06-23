@@ -161,10 +161,21 @@ file* Create_List_file() {
 	file* temp = result;
 	fstream f;
 	f.open("Server\\list_file.txt", ios::in | ios::binary);
+	if (!f.eof()) {
+		string s;
+		getline(f, s);
+		s.pop_back();
+		if (s.length() > 0) {
+			result->name = s;
+			result->count = 0;
+			result->next = NULL;
+		}
+	}
 	while (!f.eof()) {
 		string s;
 		getline(f, s);
-		if (s.length() != 0) {
+		s.pop_back();
+		if (s.length() > 0) {
 			file* temp1 = new file;
 			temp1->name = s;
 			temp1->count = 0;
@@ -183,6 +194,7 @@ bool send_list_file(SOCKET sock, file* list,string name) {
 	int i = 1;
 	while (temp) {
 		s += to_string(i) + "   ";
+		i++;
 		s += temp->name;
 		s += '\n';
 		temp = temp->next;
