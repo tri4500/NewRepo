@@ -139,21 +139,21 @@ int sign_up(SOCKET& Client, Account &list) {
 
 
 
-void send_all(vector<SOCKET>& list, int sign)
+void send_all(vector<SOCKET>& list, int sign,string name)
 {
-	if (sign == 1) {
-		for (int i = 0; i < list.size() - 1; i++)
-		{
-			send(list[i], "new one", 200, 0);
-		}
+	char buffer[200];
+	if (sign == 1)
+	{
+		sprintf_s(buffer, "%s login\n", name);
 	}
 	else
+		sprintf_s(buffer, "%s dang xuat\n", name);
+
+	for (int i = 0; i < list.size() - 1; i++)
 	{
-		for (int i = 0; i < list.size() - 1; i++)
-		{
-			send(list[i], "log off", 200, 0);
-		}
+		send(list[i], buffer, 200, 0);
 	}
+
 }
 
 file* Create_List_file() {
@@ -177,7 +177,7 @@ file* Create_List_file() {
 	return result;
 }
 
-bool send_list_file(SOCKET sock, file* list) {
+bool send_list_file(SOCKET sock, file* list,string name) {
 	string s;
 	file* temp = list;
 	int i = 1;
@@ -187,13 +187,14 @@ bool send_list_file(SOCKET sock, file* list) {
 		s += '\n';
 		temp = temp->next;
 	}
+	cout << "Nguoi dung: " << name << "dang nhan list file" << endl;
 	int size = s.length() + 1;
 	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	send(sock, s.c_str(), size, 0);
 	return true;
 }
 
-bool up_load(SOCKET sock, file* list) {
+bool up_load(SOCKET sock, file* list,string name) {
 	int size;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	string path;
@@ -209,6 +210,7 @@ bool up_load(SOCKET sock, file* list) {
 	if (check) {
 		fstream des;
 		des.open(path, ios::trunc | ios::out | ios::binary);
+		cout << "nguoi dung: " << name << " dang Upload file: " << path << endl;
 		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 		char* buffer;
 		buffer = new char[size];
@@ -229,6 +231,7 @@ bool up_load(SOCKET sock, file* list) {
 	}
 	else {
 		temp->mutex_access.lock();
+		cout << "nguoi dung: " << name << " dang cap nhat file: " << path << endl;
 		fstream des;
 		des.open(path, ios::trunc | ios::out | ios::binary);
 		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
@@ -243,7 +246,7 @@ bool up_load(SOCKET sock, file* list) {
 	return true;
 }
 
-bool down_load(SOCKET sock, file* list) {
+bool down_load(SOCKET sock, file* list,string name) {
 	int pos;
 	bool val_return = true;
 	recv(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
@@ -265,6 +268,7 @@ bool down_load(SOCKET sock, file* list) {
 		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	}
 	else {
+		cout << "Nguoi dung: " << name << " dang dowload file: " << temp->name << endl;
 		int size;
 		src.seekg(0, ios::end);
 		size = src.tellg();

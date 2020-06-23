@@ -95,7 +95,6 @@ unsigned int __stdcall ServClient(void* data)
 	string name;
 	int check;
 	printf("Client connected\n");
-	send_all(list_socket,1);
 	int option;
 	// Client chon dang nhap hoac dang ki
 	recv(Client, (char*)&option, sizeof(int), 0);
@@ -115,32 +114,34 @@ unsigned int __stdcall ServClient(void* data)
 		check = 0;
 	}
 	if (check == 1) {
-		send_list_file(Client, list_file);
+		send_all(list_socket, 1, name);
+		send_list_file(Client, list_file, name);
 		int index = 1;
 		while (index != 0) {
 			recv(Client, reinterpret_cast<char*>(&index), sizeof(index), 0);
 			// index=1 -> download file
 			if (index == 1) {
-				down_load(Client, list_file);
+				down_load(Client, list_file, name);
 			}
 			//index=2 -> upload file
 			else if (index == 2) {
-				up_load(Client, list_file);
+				up_load(Client, list_file, name);
 			}
 			//index=3 -> Tai lai list file
 			else if (index == 3) {
-				send_list_file(Client, list_file);
+				send_list_file(Client, list_file, name);
 			}
 			else {
 				index = 0;
 			}
 		}
+		erase_socket(list_socket, Client, mutex_delete_socket);
+		send_all(list_socket, 2, name);
 	}
 
 	closesocket(Client);
 	a.log_out(name);
-	erase_socket(list_socket, Client, mutex_delete_socket);
-	send_all(list_socket, 2);
-		return 0;
+
+	return 0;
 }
 

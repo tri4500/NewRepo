@@ -38,9 +38,9 @@ struct file {
 	string name;
 	file* next;
 };
-void send_all(vector<SOCKET>&list,int sign);
+void send_all(vector<SOCKET>&list,int sign,string name);
 file* Create_List_file();
-bool send_list_file(SOCKET sock, file* list);
-bool up_load(SOCKET sock, file* list);
-bool down_load(SOCKET sock, file* list);
+bool send_list_file(SOCKET sock, file* list, string name);
+bool up_load(SOCKET sock, file* list, string name);
+bool down_load(SOCKET sock, file* list, string name);
 void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx);
