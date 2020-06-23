@@ -41,9 +41,7 @@ int Menu::start()
 }
 
 void Menu::Print_list_file() {
-    for (int i = 0; i < list_file_size; i++) {
-        cout << list_file[i];
-    }
+    printf("%s", list_file);
 }
 
 int Menu::work() {

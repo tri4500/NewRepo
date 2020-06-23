@@ -10,6 +10,6 @@ int sign_up(SOCKET sock);
 unsigned int __stdcall  Listen(void* data);
 bool up_load(SOCKET sock);
 bool down_load(SOCKET sock);
-bool get_list_file(SOCKET sock, char* buffer);
+bool get_list_file(SOCKET sock, char*& buffer);
 
 

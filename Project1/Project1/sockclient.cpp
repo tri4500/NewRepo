@@ -47,7 +47,6 @@ int main()
 	}
 	printf("Connect Server Success\n");
 	Menu menu(sock);
-	_beginthreadex(0, 0, Listen, (void*)&sock, 0, 0);
 	if (menu.start() == 1)
 	{
 		menu.work();

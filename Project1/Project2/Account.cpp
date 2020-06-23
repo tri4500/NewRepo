@@ -5,7 +5,7 @@ Account::Account()
 	ifstream file;
 	user temp;
 	temp.is_login = false;
-	file.open("listaccount.txt", std::ofstream::in);
+	file.open("Server\\listaccount.txt", std::ofstream::in);
 	while (!file.eof()) {
 		getline(file, temp.login_name, ' ');
 		getline(file, temp.password);
@@ -21,7 +21,7 @@ void Account::save_list_user_file()
 {
 	mtx.lock();
 	fstream file;
-	file.open("listaccount.txt", std::fstream::app);
+	file.open("Server\\listaccount.txt", std::fstream::app);
 	file << list.back().login_name << " " << list.back().password << endl;
 	file.close();
 	mtx.unlock();
@@ -160,7 +160,7 @@ file* Create_List_file() {
 	file* result = new file;
 	file* temp = result;
 	fstream f;
-	f.open("list_file.txt", ios::in | ios::binary);
+	f.open("Server\\list_file.txt", ios::in | ios::binary);
 	while (!f.eof()) {
 		string s;
 		getline(f, s);
@@ -193,7 +193,7 @@ bool send_list_file(SOCKET sock, file* list,string name) {
 	send(sock, s.c_str(), size, 0);
 	return true;
 }
-
+//123
 bool up_load(SOCKET sock, file* list,string name) {
 	int size;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
@@ -261,7 +261,7 @@ bool down_load(SOCKET sock, file* list,string name) {
 	}
 	temp->mutex_val.unlock();
 	fstream src;
-	src.open(temp->name, ios::in | ios::binary);
+	src.open("Server\\"+temp->name, ios::in | ios::binary);
 	if (!src) {
 		val_return = false;
 		int size = -1;
@@ -286,7 +286,7 @@ bool down_load(SOCKET sock, file* list,string name) {
 	temp->mutex_val.unlock();
 	return val_return;
 }
-//123123245124343525443534
+
 void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx)
 {
 	mtx.lock();

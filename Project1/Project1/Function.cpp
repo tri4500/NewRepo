@@ -170,11 +170,13 @@ bool down_load(SOCKET sock) {
 	return true;
 }
 
-bool get_list_file(SOCKET sock, char* buffer) {
+bool get_list_file(SOCKET sock, char*& buffer) {
 	int size;
 	delete[] buffer;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	buffer = new char[size];
+	buffer = new char[size+1];
 	recv(sock, buffer, size, 0);
+	buffer[size] = '\0';
+	printf(" \n");
 	return size;
 }
