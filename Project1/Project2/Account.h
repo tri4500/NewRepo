@@ -40,6 +40,7 @@ struct file {
 };
 void send_all(vector<SOCKET>&list,int sign,string name);
 file* Create_List_file();
+void Update_txt_file(file* list_file);
 bool send_list_file(SOCKET sock, file* list, string name);
 bool up_load(SOCKET sock, file* list, string name);
 bool down_load(SOCKET sock, file* list, string name);

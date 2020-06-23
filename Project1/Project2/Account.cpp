@@ -188,6 +188,17 @@ file* Create_List_file() {
 	return result;
 }
 
+void Update_txt_file(file* list_file) {
+	file* temp = list_file;
+	fstream f;
+	f.open("Server//list_file.txt", ios::out | ios::trunc | ios::binary);
+	while (temp) {
+		f << temp->name << endl;
+		temp = temp->next;
+	}
+}
+
+
 bool send_list_file(SOCKET sock, file* list,string name) {
 	string s;
 	file* temp = list;
@@ -209,8 +220,12 @@ bool send_list_file(SOCKET sock, file* list,string name) {
 bool up_load(SOCKET sock, file* list,string name) {
 	int size;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	string path;
-	recv(sock, reinterpret_cast<char*>(&path), size, 0);
+	char* buffer = new char[size + 1];
+	recv(sock, buffer, size, 0);
+	buffer[size] = '\0';
+	string path =string(buffer);
+	cout << path << endl;
+	cout << path.length() << endl;
 	bool check = true;
 	file* temp = list;
 	while (temp) {
@@ -218,10 +233,14 @@ bool up_load(SOCKET sock, file* list,string name) {
 			check = false;
 			break;
 		}
+		temp = temp->next;
 	}
 	if (check) {
 		fstream des;
-		des.open(path, ios::trunc | ios::out | ios::binary);
+		des.open("Server//"+path, ios::out | ios::trunc | ios::binary);
+		if (!des) {
+			cout << "khong mo duoc file" << endl;
+		}
 		cout << "nguoi dung: " << name << " dang Upload file: " << path << endl;
 		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 		char* buffer;
@@ -245,7 +264,10 @@ bool up_load(SOCKET sock, file* list,string name) {
 		temp->mutex_access.lock();
 		cout << "nguoi dung: " << name << " dang cap nhat file: " << path << endl;
 		fstream des;
-		des.open(path, ios::trunc | ios::out | ios::binary);
+		des.open("Server//" + path, ios::out | ios::trunc | ios::binary);
+		if (!des) {
+			cout << "khong mo duoc file" << endl;
+		}
 		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 		char* buffer;
 		buffer = new char[size];

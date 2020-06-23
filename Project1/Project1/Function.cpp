@@ -122,7 +122,7 @@ bool up_load(SOCKET sock) {
 	int size;
 	size = path.length() + 1;
 	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	send(sock, reinterpret_cast<char*>(&path), size, 0);
+	send(sock, path.c_str(), size, 0);
 	src.seekg(0, ios::end);
 	size = src.tellg();
 	src.seekg(0, ios::beg);

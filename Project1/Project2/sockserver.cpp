@@ -77,6 +77,8 @@ int main()
 		_beginthreadex(0,0,ServClient,(void*)&client,0,0);
 		
 	}
+	//cap nhat list file vao file txt
+	Update_txt_file(list_file);
 	// xoa list file
 	file* temp = list_file;
 	while (temp) {
@@ -135,6 +137,7 @@ unsigned int __stdcall ServClient(void* data)
 				index = 0;
 			}
 		}
+		cout << "nguoi dung " << name << " log out" << endl;
 		erase_socket(list_socket, Client, mutex_delete_socket);
 		send_all(list_socket, 2, name);
 	}
