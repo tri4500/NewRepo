@@ -139,11 +139,20 @@ int sign_up(SOCKET& Client, Account &list) {
 
 
 
-void send_all(vector<SOCKET>& list)
+void send_all(vector<SOCKET>& list, int sign)
 {
-	for (int i = 0; i < list.size() - 1; i++)
+	if (sign == 1) {
+		for (int i = 0; i < list.size() - 1; i++)
+		{
+			send(list[i], "new one", 200, 0);
+		}
+	}
+	else
 	{
-		send(list[i], "new one", 200, 0);
+		for (int i = 0; i < list.size() - 1; i++)
+		{
+			send(list[i], "log off", 200, 0);
+		}
 	}
 }
 
@@ -282,7 +291,7 @@ void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx)
 		if (a == list[i])
 		{
 			list.erase(list.begin()+i);
-			return;
+			break;
 		}
 	}
 	mtx.unlock();

@@ -95,7 +95,7 @@ unsigned int __stdcall ServClient(void* data)
 	string name;
 	int check;
 	printf("Client connected\n");
-	send_all(list_socket);
+	send_all(list_socket,1);
 	int option;
 	// Client chon dang nhap hoac dang ki
 	recv(Client, (char*)&option, sizeof(int), 0);
@@ -140,6 +140,7 @@ unsigned int __stdcall ServClient(void* data)
 	closesocket(Client);
 	a.log_out(name);
 	erase_socket(list_socket, Client, mutex_delete_socket);
+	send_all(list_socket, 2);
 		return 0;
 }
 
