@@ -36,5 +36,10 @@ struct file {
 	mutex mutex_access;
 	int count;
 	string name;
+	file* next;
 };
 void send_all(vector<SOCKET>&list);
+file* Create_List_file();
+bool send_list_file(SOCKET sock, file* list);
+bool up_load(SOCKET sock, file* list);
+bool down_load(SOCKET sock, file* list);

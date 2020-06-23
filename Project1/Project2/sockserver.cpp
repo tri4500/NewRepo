@@ -6,11 +6,13 @@
 #include <process.h>
 #include<stdio.h>
 #include"Account.h"
+#include <fstream>
 #pragma comment(lib,"ws2_32.lib" )
-
+#pragma warning( disable : 4996 )
 unsigned int __stdcall  ServClient(void *data);
 Account a;
 vector<SOCKET> list_socket;
+file* list_file;
 int main()
 {
 
@@ -30,8 +32,11 @@ int main()
 		printf("WSA startup failed");
 		return 0;
 	}
+	// khoi tao list file
+	
+	list_file = Create_List_file();
 
-
+	
 	sock = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
 	
 	if(sock == INVALID_SOCKET)
@@ -71,7 +76,13 @@ int main()
 		_beginthreadex(0,0,ServClient,(void*)&client,0,0);
 		
 	}
-
+	// xoa list file
+	file* temp = list_file;
+	while (temp) {
+		file* temp1 = temp->next;
+		delete[] temp;
+		temp = temp1;
+	}
 
 	return 0;
 }
@@ -89,7 +100,7 @@ unsigned int __stdcall ServClient(void* data)
 	recv(Client, (char*)&option, sizeof(int), 0);
 	if (option == 1)
 	{
-		"Client dang dang nhap\n";
+		cout << "1 Client dang dang nhap\n";
 		check = login(Client, a,name);
 	}
 	else if (option == 2)
@@ -102,8 +113,28 @@ unsigned int __stdcall ServClient(void* data)
 		cout << "Client thoat\n";
 		check = 0;
 	}
-	if (check == 1)
-		cout << "Dang cap nhat\n";
+	if (check == 1) {
+		send_list_file(Client, list_file);
+		int index = 1;
+		while (index != 0) {
+			recv(Client, reinterpret_cast<char*>(&index), sizeof(index), 0);
+			// index=1 -> download file
+			if (index == 1) {
+				down_load(Client, list_file);
+			}
+			//index=2 -> upload file
+			else if (index == 2) {
+				up_load(Client, list_file);
+			}
+			//index=3 -> Tai lai list file
+			else if (index == 3) {
+				send_list_file(Client, list_file);
+			}
+			else {
+				index = 0;
+			}
+		}
+	}
 
 	closesocket(Client);
 	a.log_out(name);

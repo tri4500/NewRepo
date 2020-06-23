@@ -133,19 +133,19 @@ bool up_load(SOCKET sock) {
 		return false;
 	}
 	cout << "mo file thanh cong";
+	int size;
+	size = path.length() + 1;
+	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	send(sock, reinterpret_cast<char*>(&path), size, 0);
 	src.seekg(0, ios::end);
-	int size = src.tellg();
+	size = src.tellg();
 	src.seekg(0, ios::beg);
 	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	char* buffer;
-	while (size > 0) {
-		int temp = (size > 512 * 8) ? 512 * 8 : size;
-		size -= 512 * 8;
-		buffer = new char[temp];
-		src.read(buffer, temp);
-		send(sock, buffer, temp, 0);
-		delete[] buffer;
-	}
+	buffer = new char[size];
+	src.read(buffer, size);
+	send(sock, buffer, size, 0);
+	delete[] buffer;
 	cout << "Upload file thanh cong" << endl;
 	src.close();
 	return true;
@@ -163,34 +163,32 @@ bool down_load(SOCKET sock) {
 	fstream des;
 	des.open(path, ios::out | ios::trunc | ios::binary);
 	if (!des) {
-		cout << "Khong mo duoc file";
+		cout << "Khong mo duoc file output";
 		des.close();
 		return false;
 	}
-	cout << "mo file thanh cong";
 	int size;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	char* buffer;
-	while (size > 0) {
-		int temp = (size > 512 * 8) ? 512 * 8 : size;
-		size -= 512 * 8;
-		buffer = new char[temp];
-		recv(sock, buffer, temp, 0);
-		des.write(buffer, temp);
-		delete[] buffer;
+	if (size < 0) {
+		des.close();
+		cout << "Loi tu server" << endl;
+		return false;
 	}
+	char* buffer;
+	buffer = new char[size];
+	recv(sock, buffer, size, 0);
+	des.write(buffer, size);
+	delete[] buffer;
 	cout << "Download file thanh cong" << endl;
 	des.close();
 	return true;
 }
 
 bool get_list_file(SOCKET sock, char* buffer) {
-	delete[] buffer;
 	int size;
+	delete[] buffer;
 	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	buffer = new char[size];
 	recv(sock, buffer, size, 0);
-	return true;
+	return size;
 }
-
-

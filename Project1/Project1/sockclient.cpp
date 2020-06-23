@@ -8,6 +8,7 @@
 #include<process.h>
 #include"Menu.h"
 #pragma comment(lib,"ws2_32.lib")
+#pragma warning( disable : 4996 )
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 int main()
@@ -49,8 +50,7 @@ int main()
 	_beginthreadex(0, 0, Listen, (void*)&sock, 0, 0);
 	if (menu.start() == 1)
 	{
-		cout << "\ncac dich vu khac chua viet code\n";
-		Sleep(10000);
+		menu.work();
 	}
 	closesocket(sock);
 	return 0;

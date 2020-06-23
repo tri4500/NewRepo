@@ -147,13 +147,36 @@ void send_all(vector<SOCKET>& list)
 	}
 }
 
+file* Create_List_file() {
+	file* result = new file;
+	file* temp = result;
+	fstream f;
+	f.open("list_file.txt", ios::in | ios::binary);
+	while (!f.eof()) {
+		string s;
+		getline(f, s);
+		if (s.length() != 0) {
+			file* temp1 = new file;
+			temp1->name = s;
+			temp1->count = 0;
+			temp1->next = NULL;
+			temp->next = temp1;
+			temp = temp1;
+		}
+	}
+	f.close();
+	return result;
+}
 
-bool send_list_file(SOCKET sock, vector<string> list) {
+bool send_list_file(SOCKET sock, file* list) {
 	string s;
-	for (int i = 0; i < list.size(); i++) {
+	file* temp = list;
+	int i = 1;
+	while (temp) {
 		s += to_string(i) + "   ";
-		s += list[i];
+		s += temp->name;
 		s += '\n';
+		temp = temp->next;
 	}
 	int size = s.length() + 1;
 	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
@@ -161,111 +184,92 @@ bool send_list_file(SOCKET sock, vector<string> list) {
 	return true;
 }
 
-//bool up_load(SOCKET sock, vector<file> list) {
-//	int size;
-//	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-//	string path;
-//	recv(sock, reinterpret_cast<char*>(&path), size, 0);
-//	bool check = true;
-//	int i;
-//	for (i = 0; i < list.size(); i++) {
-//		if (path.compare(list[i].name) == 0) {
-//			check = false;
-//			break;
-//		}
-//	}
-//	if (check) {
-//		file temp;
-//		temp.name = path;
-//		temp.count = 0;
-//		fstream des;
-//		des.open(path, ios::trunc | ios::out | ios::binary);
-//		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-//		char* buffer;
-//		while (size > 0) {
-//			int temp = (size > 512 * 8) ? 512 * 8 : size;
-//			size -= 512 * 8;
-//			buffer = new char[temp];
-//			recv(sock, buffer, temp, 0);
-//			des.write(buffer, temp);
-//			delete[] buffer;
-//		}
-//		des.close();
-//		list.push_back(temp);
-//	}
-//	else {
-//		list[i].mutex_access.lock();
-//		fstream des;
-//		des.open(path, ios::trunc | ios::out | ios::binary);
-//		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-//		char* buffer;
-//		while (size > 0) {
-//			int temp = (size > 512 * 8) ? 512 * 8 : size;
-//			size -= 512 * 8;
-//			buffer = new char[temp];
-//			recv(sock, buffer, temp, 0);
-//			des.write(buffer, temp);
-//			delete[] buffer;
-//		}
-//		des.close();
-//		list[i].mutex_access.unlock();
-//	}
-//	return true;
-//}
+bool up_load(SOCKET sock, file* list) {
+	int size;
+	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	string path;
+	recv(sock, reinterpret_cast<char*>(&path), size, 0);
+	bool check = true;
+	file* temp = list;
+	while (temp) {
+		if (temp->name.compare(path) == 0) {
+			check = false;
+			break;
+		}
+	}
+	if (check) {
+		fstream des;
+		des.open(path, ios::trunc | ios::out | ios::binary);
+		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+		char* buffer;
+		buffer = new char[size];
+		recv(sock, buffer, size, 0);
+		des.write(buffer, size);
+		delete[] buffer;
+		des.close();
+		file* new_file = new file;
+		new_file->name = path;
+		new_file->count = 0;
+		new_file->next = NULL;
+		temp = list;
+		while (temp->next) {
+			temp = temp->next;
+		}
+		temp->next = new_file;
+		return true;
+	}
+	else {
+		temp->mutex_access.lock();
+		fstream des;
+		des.open(path, ios::trunc | ios::out | ios::binary);
+		recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+		char* buffer;
+		buffer = new char[size];
+		recv(sock, buffer, size, 0);
+		des.write(buffer, size);
+		des.close();
+		temp->mutex_access.unlock();
+		return true;
+	}
+	return true;
+}
 
-//bool load_list_file(vector<file>& v) {
-//	fstream f;
-//	f.open("list_file.txt", ios::in | ios::binary);
-//	if (!f) {
-//		cout << "khong mo dc file";
-//		return false;
-//	}
-//	//v.clear();
-//	while (!f.eof()) {
-//		file temp;
-//		getline(f, temp.name);
-//		temp.count = 0;
-//		v.push_back(temp);
-//	}
-//	v.pop_back();
-//	return true;
-//}
-
-//bool down_load(SOCKET sock, vector<file>& list) {
-//	int pos;
-//	bool val_return = true;
-//	recv(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
-//	list[pos].mutex_val.lock();
-//	list[pos].count++;
-//	if (list[pos].count == 1) {
-//		list[pos].mutex_access.lock();
-//	}
-//	list[pos].mutex_val.unlock();
-//	fstream src;
-//	src.open(list[pos].name, ios::in | ios::binary);
-//	if (!src) {
-//		val_return = false;
-//	}
-//	else {
-//		int size;
-//		src.seekg(0, ios::end);
-//		size = src.tellg();
-//		src.seekg(0, ios::beg);
-//		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-//		while (size > 0) {
-//			int temp = (size > 512 * 8) ? 512 * 8 : size;
-//			size -= 512 * 8;
-//			char* buffer = new char[temp];
-//			src.read(buffer, temp);
-//			send(sock, buffer, temp, 0);
-//			delete[] buffer;
-//		}
-//	}
-//	list[pos].mutex_val.lock();
-//	list[pos].count--;
-//	if (list[pos].count == 0) {
-//		list[pos].mutex_access.unlock();
-//	}
-//	list[pos].mutex_val.unlock();
-//	return val_return;
-//}
+bool down_load(SOCKET sock, file* list) {
+	int pos;
+	bool val_return = true;
+	recv(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
+	file* temp = list;
+	for (int i = 1; i < pos; i++) {
+		temp = temp->next;
+	}
+	temp->mutex_val.lock();
+	temp->count++;
+	if (temp->count == 1) {
+		temp->mutex_access.lock();
+	}
+	temp->mutex_val.unlock();
+	fstream src;
+	src.open(temp->name, ios::in | ios::binary);
+	if (!src) {
+		val_return = false;
+		int size = -1;
+		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	}
+	else {
+		int size;
+		src.seekg(0, ios::end);
+		size = src.tellg();
+		src.seekg(0, ios::beg);
+		send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+		char* buffer = new char[size];
+		src.read(buffer, size);
+		send(sock, buffer, size, 0);
+	}
+	temp->mutex_val.lock();
+	temp->count--;
+	if (temp->count == 0) {
+		temp->mutex_access.unlock();
+	}
+	temp->mutex_val.unlock();
+	return val_return;
+}
