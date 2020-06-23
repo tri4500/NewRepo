@@ -286,7 +286,7 @@ bool down_load(SOCKET sock, file* list,string name) {
 	temp->mutex_val.unlock();
 	return val_return;
 }
-//123123245124
+//123123245124343525443534
 void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx)
 {
 	mtx.lock();

@@ -106,7 +106,7 @@ unsigned int __stdcall Listen(void* data)
 	}
 	return 0;
 }
-
+	
 bool up_load(SOCKET sock) {
 	cout << "Nhap ten file: ";
 	string path;
