@@ -13,6 +13,7 @@ unsigned int __stdcall  ServClient(void *data);
 Account a;
 vector<SOCKET> list_socket;
 file* list_file;
+mutex mutex_delete_socket;// dung de xoa cac socket khong con ket noi
 int main()
 {
 
@@ -138,6 +139,7 @@ unsigned int __stdcall ServClient(void* data)
 
 	closesocket(Client);
 	a.log_out(name);
-	return 0;
+	erase_socket(list_socket, Client, mutex_delete_socket);
+		return 0;
 }
 

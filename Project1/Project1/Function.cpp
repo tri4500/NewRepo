@@ -25,20 +25,6 @@ std::string passwordInput(unsigned maxLength)
 	return pw;
 }
 
-string create_password()
-{
-	string pw;
-	string confirm;
-	do {
-		cout << "Moi ban nhap mat khau(Toi da 5 ky tu): ";
-		pw = passwordInput(6);
-		cout << "Moi ban xac nhan lai: ";
-		confirm = passwordInput(6);
-		if (pw.compare(confirm) != 0)
-			cout << "Moi ban nhap lai: \n";
-	} while (pw.compare(confirm) != 0);
-	return pw;
-}
 int login(SOCKET &sock) {
 	string login, pw;
 	int sign;
@@ -93,9 +79,9 @@ int sign_up(SOCKET sock) {
 	string confirm;
 	do {
 		cout << "Password: ";
-		pw = passwordInput(6);
+		pw = passwordInput(21);
 		cout << "Moi ban xac nhan lai: ";
-		confirm = passwordInput(6);
+		confirm = passwordInput(21);
 		if (pw.compare(confirm) != 0)
 			cout << "Mat khau khong khop, moi ban nhap lai\n";
 	} while (pw.compare(confirm) != 0);

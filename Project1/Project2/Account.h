@@ -43,3 +43,4 @@ file* Create_List_file();
 bool send_list_file(SOCKET sock, file* list);
 bool up_load(SOCKET sock, file* list);
 bool down_load(SOCKET sock, file* list);
+void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx);

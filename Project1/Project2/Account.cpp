@@ -273,3 +273,17 @@ bool down_load(SOCKET sock, file* list) {
 	temp->mutex_val.unlock();
 	return val_return;
 }
+
+void erase_socket(vector<SOCKET> list,SOCKET a,mutex& mtx)
+{
+	mtx.lock();
+	for (int i = 0; i < list.size(); i++)
+	{
+		if (a == list[i])
+		{
+			list.erase(list.begin()+i);
+			return;
+		}
+	}
+	mtx.unlock();
+}
