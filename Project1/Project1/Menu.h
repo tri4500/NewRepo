@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <string>
 #include <Windows.h>
+#include <mutex>
 #pragma comment(lib,"ws2_32.lib")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 using namespace std;
@@ -17,8 +18,9 @@ public:
 	Menu();
 	Menu(SOCKET a);
 	~Menu();
+	void Get_List_file();
 	void Print_list_file();
 	int start();
-	int work();
+	int work(int index);
 };
 

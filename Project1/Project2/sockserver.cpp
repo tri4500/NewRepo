@@ -13,6 +13,7 @@ unsigned int __stdcall  ServClient(void *data);
 Account a;
 vector<SOCKET> list_socket;
 file* list_file;
+string thong_bao;
 mutex mutex_delete_socket;// dung de xoa cac socket khong con ket noi
 int main()
 {
@@ -116,7 +117,10 @@ unsigned int __stdcall ServClient(void* data)
 		check = 0;
 	}
 	if (check == 1) {
-		send_all(list_socket, 1, name);
+		//send_all(list_socket, 1, name);
+		thong_bao += ("nguoi dung: " + name + " dang hoat dong");
+		int size = thong_bao.length();
+		send(Client, reinterpret_cast<char*>(&size), sizeof(size), 0);
 		send_list_file(Client, list_file, name);
 		int index = 1;
 		while (index != 0) {
@@ -133,11 +137,17 @@ unsigned int __stdcall ServClient(void* data)
 			else if (index == 3) {
 				send_list_file(Client, list_file, name);
 			}
+			else if (index == 4) {
+				int size_temp = thong_bao.length();
+				send(Client, reinterpret_cast<char*>(&size_temp), sizeof(size_temp), 0);
+				send(Client, thong_bao.c_str(), size_temp, 0);
+			}
 			else {
 				index = 0;
 			}
 		}
 		cout << "nguoi dung " << name << " log out" << endl;
+		thong_bao += ("nguoi dung: " + name + " log out");
 		erase_socket(list_socket, Client, mutex_delete_socket);
 		send_all(list_socket, 2, name);
 	}

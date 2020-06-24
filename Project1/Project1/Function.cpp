@@ -120,7 +120,7 @@ bool up_load(SOCKET sock) {
 	}
 	cout << "mo file thanh cong";
 	int size;
-	size = path.length() + 1;
+	size = path.length();
 	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
 	send(sock, path.c_str(), size, 0);
 	src.seekg(0, ios::end);
