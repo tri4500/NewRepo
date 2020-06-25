@@ -44,50 +44,82 @@ void Menu::Print_list_file() {
     printf("%s", list_file);
 }
 
-void Menu::Get_List_file() {
+int Menu::Get_List_file() {
     this->list_file_size = get_list_file(sock, list_file);
+    if (this->list_file_size == -1)
+        return -1;
     //system("clr");
+    return 0;
 }
 
 int Menu::work(int index) {
     /*this->list_file_size = get_list_file(sock, list_file);
     //system("clr");*/
-    bool check;
-    send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+    int check;
+    int iResult;
+
+    iResult=send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+    if (iResult == SOCKET_ERROR) {
+        cout << "\nDisconnected to server\nKet thuc chuong trinh";
+        Sleep(2000);
+        return -1;
+    }
     switch (index) {
     case 1:
         check = down_load(sock);
-        if (check) {
-            cout << "Download file thanh cong" << endl;
+        if (check==1) {
+            cout << "\nDownload file thanh cong" << endl;
         }
-        else {
-            cout << "Download khong thanh cong" << endl;
+        else if(check==0){
+            cout << "\nDownload khong thanh cong" << endl;
+        }
+        else
+        {
+            return -1;
         }
         cout << "Dang tai lai danh sach file va quay lai menu lam viec" << endl;
         index = 3;
-        send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+        iResult=send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+        if (iResult == SOCKET_ERROR) {
+            cout << "\nDisconnected to server\nKet thuc chuong trinh";
+            Sleep(2000);
+            return -1;
+        }  
         this->list_file_size = get_list_file(sock, list_file);
+        if (this->list_file_size == -1)
+            return -1;
         Sleep(2000);
         return 1;
         break;
     case 2:
         check = up_load(sock);
-        if (check) {
+        if (check == 1) {
             cout << "Upload file thanh cong" << endl;
         }
-        else {
+        else if (check == 0) {
             cout << "Upload khong thanh cong" << endl;
         }
+        else
+            return -1;
         cout << "Dang tai lai danh sach file va quay lai menu lam viec" << endl;
         index = 3;
-        send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+        iResult=send(this->sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+        if (iResult == SOCKET_ERROR) {
+            cout << "\nDisconnected to server\nKet thuc chuong trinh";
+            Sleep(2000);
+            return -1;
+        }
         this->list_file_size = get_list_file(sock, list_file);
+        if (this->list_file_size == -1)
+            return -1;
         Sleep(2000);
         return 1;
         break;
     case 3:
         cout << "Dang tai lai danh sach file va cap nhat menu lam viec" << endl;
         this->list_file_size = get_list_file(sock, list_file);
+        if (this->list_file_size == -1)
+            return -1;   
         Sleep(2000);
         return 1;
         break;

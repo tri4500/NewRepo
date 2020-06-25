@@ -15,7 +15,7 @@ WSADATA wsaData;
 int iResult;
 sockaddr_in addr;
 SOCKET sock;
-mutex sock_access;
+static  mutex sock_access;
 int thong_bao;
 unsigned int __stdcall Nghe_Thong_bao(void* data);
 int main()
@@ -53,10 +53,19 @@ int main()
 	Menu menu(sock);
 	if (menu.start() == 1)
 	{
-		recv(sock, reinterpret_cast<char*>(&thong_bao), sizeof(thong_bao), 0);
+		iResult=recv(sock, reinterpret_cast<char*>(&thong_bao), sizeof(thong_bao), 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			exit(1);
+		}
 		sock_access.lock();
-		menu.Get_List_file();
+		iResult=menu.Get_List_file();
 		sock_access.unlock();
+		if (iResult == -1) {
+			closesocket(sock);
+			exit(1);
+		}	
 		_beginthreadex(0, 0, Nghe_Thong_bao, (void*)&sock, 0, 0);
 		int work_return = 1;
 		while (work_return != 0) {
@@ -70,7 +79,13 @@ int main()
 			cin >> index;
 			sock_access.lock();
 			work_return = menu.work(index);
+			if (work_return == -1)
+			{
+				sock_access.unlock();
+				return 0;
+			}
 			sock_access.unlock();
+
 		}
 	}
 	closesocket(sock);
@@ -81,11 +96,29 @@ unsigned int __stdcall Nghe_Thong_bao(void* data) {
 	while (true) {
 		int index = 4;
 		sock_access.lock();
-		send(sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
-		recv(sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+		iResult=send(sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			sock_access.unlock();
+			exit(1);
+		}
+		iResult=recv(sock, reinterpret_cast<char*>(&index), sizeof(index), 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			sock_access.unlock();
+			exit(1);
+		}
 		char* buffer;
 		buffer = new char[index + 1];
-		recv(sock, buffer, index, 0);
+		iResult=recv(sock, buffer, index, 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			sock_access.unlock();
+			exit(1);
+		}
 		buffer[index] = '\0';
 		string temp = string(buffer);
 		int size = temp.length();

@@ -18,7 +18,7 @@ public:
 	Menu();
 	Menu(SOCKET a);
 	~Menu();
-	void Get_List_file();
+	int Get_List_file();
 	void Print_list_file();
 	int start();
 	int work(int index);

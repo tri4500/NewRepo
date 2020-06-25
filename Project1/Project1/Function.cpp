@@ -29,6 +29,7 @@ int login(SOCKET &sock) {
 	string login, pw;
 	int sign;
 	int len1, len2;
+	int iResult;
 	cout << "Login: ";
 	cin >> login;
 	cout << "Password: ";
@@ -36,15 +37,40 @@ int login(SOCKET &sock) {
 	len1 = (int)login.length();
 	len2 = (int)pw.length();
 	// Gui kich thuoc cua ten dang nhap
-	send(sock, (char*)&len1, sizeof(int), 0);
+	iResult=send(sock, (char*)&len1, sizeof(int), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	//Gui ten dang nhap
-	send(sock, login.c_str(), len1, 0);
+	iResult=send(sock, login.c_str(), len1, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	//Gui kich thuoc mat khau
-	send(sock, (char*)&len2, sizeof(int), 0);
+	iResult=send(sock, (char*)&len2, sizeof(int), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	//Gui mat khau
-	send(sock, pw.c_str(), len2, 0);
+	iResult=send(sock, pw.c_str(), len2, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	//Nhan tin nhan kiem tra cua server
-	recv(sock, (char*)&sign, sizeof(int), 0);
+	iResult=recv(sock, (char*)&sign, sizeof(int), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	cout << sign;
 	if (sign == 1)
 		cout << "Ban dang nhap thanh cong\n";
@@ -58,17 +84,33 @@ int sign_up(SOCKET sock) {
 	string login, pw;
 	int sign;
 	int len1, len2;
+	int iResult;
 	do
 	{
 		cout << "Login: ";
 		cin >> login;
 		len1 = (int)login.length();		
 		// Gui kich thuoc cua ten dang nhap
-		send(sock, (char*)&len1, sizeof(int), 0);
+		iResult=send(sock, (char*)&len1, sizeof(int), 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			exit(1);
+		}
 		//Gui ten dang nhap
-		send(sock, login.c_str(), len1, 0);
+		iResult=send(sock, login.c_str(), len1, 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			exit(1);
+		}
 		//Nhan tin nhan kiem tra cua server
-		recv(sock, (char*)&sign, sizeof(int), 0);
+		iResult=recv(sock, (char*)&sign, sizeof(int), 0);
+		if (iResult == SOCKET_ERROR) {
+			cout << "\nDisconnected to server\nKet thuc chuong trinh";
+			Sleep(2000);
+			exit(1);
+		}
 		if (sign == 1)
 			cout << "Xin loi ten da co nguoi su dung\n";
 		else
@@ -87,62 +129,92 @@ int sign_up(SOCKET sock) {
 	} while (pw.compare(confirm) != 0);
 	len2 = (int)pw.length();
 	//Gui kich thuoc mat khau
-	send(sock, (char*)&len2, sizeof(int), 0);
+	iResult=send(sock, (char*)&len2, sizeof(int), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	//Gui mat khau
-	send(sock, pw.c_str(), len2, 0);
+	iResult=send(sock, pw.c_str(), len2, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		exit(1);
+	}
 	cout << "Dang ki thanh cong\n";
 	Sleep(2000);
 	return sign;
 }
 
-unsigned int __stdcall Listen(void* data)
-{
-	SOCKET* client = (SOCKET*)data;
-	SOCKET Client = *client;
-	char chunk[200];
-	while (recv(Client, chunk, 200, 0))
-	{
-		printf("\n%s", chunk);
-	}
-	return 0;
-}
-	
-bool up_load(SOCKET sock) {
+int up_load(SOCKET sock) {
 	cout << "Nhap ten file: ";
+	int iResult;
 	string path;
-	cin >> path;
+		cin >> path;
 	fstream src;
 	src.open(path, ios::in | ios::binary);
 	if (!src) {
 		cout << "Khong mo duoc file";
 		src.close();
-		return false;
+		return 0;
 	}
 	cout << "mo file thanh cong";
 	int size;
 	size = path.length();
-	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
-	send(sock, path.c_str(), size, 0);
+	iResult=send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		src.close();
+		return -1;
+	}
+	iResult=send(sock, path.c_str(), size, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		src.close();
+		return -1;
+	}
 	src.seekg(0, ios::end);
 	size = src.tellg();
 	src.seekg(0, ios::beg);
-	send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	iResult=send(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		src.close();
+		return -1;
+	}
 	char* buffer;
 	buffer = new char[size];
 	src.read(buffer, size);
-	send(sock, buffer, size, 0);
+	iResult=send(sock, buffer, size, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		delete[] buffer;
+		src.close();
+		return -1;
+	}
 	delete[] buffer;
 	cout << "Upload file thanh cong" << endl;
 	src.close();
-	return true;
+	return 1;
 }
 
 
-bool down_load(SOCKET sock) {
+int down_load(SOCKET sock) {
 	cout << "Nhap vi tri file: ";
 	int pos;
 	cin >> pos;
-	send(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
+	int iResult;
+	iResult=send(sock, reinterpret_cast<char*>(&pos), sizeof(pos), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		return -1;
+	}
 	string path;
 	cout << "Nhap ten file khi tai xuong:";
 	cin >> path;
@@ -151,31 +223,56 @@ bool down_load(SOCKET sock) {
 	if (!des) {
 		cout << "Khong mo duoc file output";
 		des.close();
-		return false;
+		return 0;
 	}
 	int size;
-	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	iResult=recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		des.close();
+		Sleep(2000);
+		return -1;
+	}
 	if (size < 0) {
 		des.close();
 		cout << "Loi tu server" << endl;
-		return false;
+		return 0;
 	}
 	char* buffer;
 	buffer = new char[size];
-	recv(sock, buffer, size, 0);
+	iResult=recv(sock, buffer, size, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		delete[]buffer;
+		des.close();
+		return -1;
+	}
 	des.write(buffer, size);
 	delete[] buffer;
 	cout << "Download file thanh cong" << endl;
 	des.close();
-	return true;
+	return 1;
 }
 
 int get_list_file(SOCKET sock, char*& buffer) {
 	int size;
 	delete[] buffer;
-	recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	int iResult;
+	iResult=recv(sock, reinterpret_cast<char*>(&size), sizeof(size), 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		return -1;
+	}
 	buffer = new char[size+1];
-	recv(sock, buffer, size, 0);
+	iResult=recv(sock, buffer, size, 0);
+	if (iResult == SOCKET_ERROR) {
+		cout << "\nDisconnected to server\nKet thuc chuong trinh";
+		Sleep(2000);
+		delete[]buffer;
+		return -1;
+	}
 	buffer[size] = '\0';
 	return size;
 }
