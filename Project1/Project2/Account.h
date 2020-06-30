@@ -29,7 +29,7 @@ public:
 };
 
 int login(SOCKET &Client,Account &a,string &name);
-int sign_up(SOCKET&Client, Account &list);
+int sign_up(SOCKET&Client, Account &list,string &name);
 
 struct file {
 	mutex mutex_val;

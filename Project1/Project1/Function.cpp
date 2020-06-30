@@ -143,6 +143,7 @@ int sign_up(SOCKET sock) {
 		exit(1);
 	}
 	cout << "Dang ki thanh cong\n";
+	sign = (sign == 0) ? 1 : 0;
 	Sleep(2000);
 	return sign;
 }

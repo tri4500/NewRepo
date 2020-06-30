@@ -108,10 +108,11 @@ int login(SOCKET &Client,Account &a,string &name)
 	delete[]buffer;
 	return check;
 }
-int sign_up(SOCKET& Client, Account &list) {
+int sign_up(SOCKET& Client, Account &list,string &name) {
 	string pw, login;
 	int size;
 	char* buffer;
+	int check;
 	do
 	{
 		//Nhan kich thuoc cua ten dang nhap
@@ -121,7 +122,7 @@ int sign_up(SOCKET& Client, Account &list) {
 		recv(Client, buffer, size, 0);
 		buffer[size] = '\0';
 		login = string(buffer);
-		int check = list.check_login(login);
+		check = list.check_login(login);
 		send(Client, (char*)&check, sizeof(int), 0);
 	} while (list.check_login(login) == 1);
 	//Nhan kich thuoc mat khau
@@ -132,9 +133,10 @@ int sign_up(SOCKET& Client, Account &list) {
 	buffer[size] = '\0';
 	pw = string(buffer);
 	list.push_back(login, pw);
+	name = login;
 	delete[]buffer;
-
-	return list.check_login(login);
+	check = (check == 0) ? 1 : 0;
+	return check;
 }
 
 
