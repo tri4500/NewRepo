@@ -166,7 +166,6 @@ file* Create_List_file() {
 	if (!f.eof()) {
 		string s;
 		getline(f, s);
-		s.pop_back();
 		if (s.length() > 0) {
 			result->name = s;
 			result->count = 0;
@@ -176,7 +175,6 @@ file* Create_List_file() {
 	while (!f.eof()) {
 		string s;
 		getline(f, s);
-		s.pop_back();
 		if (s.length() > 0) {
 			file* temp1 = new file;
 			temp1->name = s;

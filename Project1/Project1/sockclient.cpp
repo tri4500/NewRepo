@@ -16,6 +16,7 @@ int iResult;
 sockaddr_in addr;
 SOCKET sock;
 static  mutex sock_access;
+static mutex cout_access;
 int thong_bao;
 unsigned int __stdcall Nghe_Thong_bao(void* data);
 int main()
@@ -69,12 +70,14 @@ int main()
 		_beginthreadex(0, 0, Nghe_Thong_bao, (void*)&sock, 0, 0);
 		int work_return = 1;
 		while (work_return != 0) {
+			cout_access.lock();
 			menu.Print_list_file();
 			cout << "\n\n\n\t Chon thao tac:" << endl;
 			cout << "1. Download File" << endl;
 			cout << "2. Upload File" << endl;
 			cout << "3. Tai lai danh sach file" << endl;
 			cout << "0. Thoat" << endl;
+			cout_access.unlock();
 			int index;
 			cin >> index;
 			sock_access.lock();
@@ -124,10 +127,12 @@ unsigned int __stdcall Nghe_Thong_bao(void* data) {
 		int size = temp.length();
 		if (size > thong_bao) {
 			temp = temp.substr(thong_bao);
-			cout << temp;
+			cout_access.lock();
+			cout << temp << endl;
+			cout_access.unlock();
+			thong_bao = index;
 		}
-		thong_bao = size;
 		sock_access.unlock();
-		Sleep(5000);
+		Sleep(2000);
 	}
 }

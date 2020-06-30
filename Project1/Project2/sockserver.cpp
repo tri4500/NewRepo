@@ -37,6 +37,13 @@ int main()
 	// khoi tao list file
 	
 	list_file = Create_List_file();
+	file* temp11 = list_file;
+	while (temp11->next != NULL) {
+		temp11->name.pop_back();
+		//cout << temp11->name.length() << "    " << temp11->name << endl;
+		temp11 = temp11->next;
+	}
+
 
 	
 	sock = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
